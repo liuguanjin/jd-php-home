@@ -95,3 +95,15 @@ Route::get('sign/:id','homeapi/sign/index');
 Route::put('sign/:id','homeapi/sign/save');
 //用户上传头像接口
 Route::post('avatar/:id','homeapi/user/avatar');
+//用户搜索商品历史接口
+Route::get('search-history/:id','homeapi/SearchGoods/history');
+//用户搜索商品频词接口
+Route::get('search-often','homeapi/SearchGoods/often');
+//用户删除搜索商品历史接口
+Route::delete('delete-search-history/:id','homeapi/SearchGoods/delete');
+//用户搜索商品推荐接口
+Route::get('search-recommend','homeapi/SearchGoods/recommend');
+//用户搜索商品结果接口
+Route::get('search-result','homeapi/SearchGoods/searchResult');
+//用户添加搜索历史接口
+Route::post('search-save','homeapi/SearchGoods/save');

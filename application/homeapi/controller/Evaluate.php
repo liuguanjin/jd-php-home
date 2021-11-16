@@ -20,11 +20,14 @@ class Evaluate extends BaseApi
         }
         \think\Db::startTrans();
         try {
-            $evaluate_time = time();
             $evaluate_data['goods_id'] = $params['goods_id'];
             $evaluate_data['user_id'] = $params['user_id'];
             $evaluate_data['content'] = $params['content'];
-            $evaluate_data['evaluate_time'] = $evaluate_time;
+            $evaluate_data['evaluate_grade'] = $params['evaluate_grade'];
+            $evaluate_data['evaluate_describe_score'] = $params['evaluate_describe_score'];
+            $evaluate_data['evaluate_logistics_score'] = $params['evaluate_logistics_score'];
+            $evaluate_data['evaluate_server_score'] = $params['evaluate_server_score'];
+            $evaluate_data['is_choice'] = $params['is_choice'];
             $evaluate = \app\homeapi\model\Evaluate::create($evaluate_data,true);
             $evaluate_images = [];
             foreach ($params['evaluate_images'] as $image){

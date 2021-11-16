@@ -4,6 +4,7 @@ namespace app\homeapi\controller;
 
 use app\homeapi\model\OrderGoods;
 use think\Controller;
+use think\Model;
 use think\Request;
 
 class Order extends BaseApi
@@ -17,7 +18,7 @@ class Order extends BaseApi
     {
         //获取所有订单
         $user_id = input('user_id');
-        $order = \app\homeapi\model\Order::with('order_goods')->where('user_id',$user_id)->select();
+        $order = \app\homeapi\model\Order::with('order_goods')->where('user_id',$user_id)->order('create_time desc')->select();
         $this->ok($order);
     }
 
@@ -58,8 +59,8 @@ class Order extends BaseApi
         \think\Db::startTrans();
         try {
             $info = \app\homeapi\model\Order::create($params,true);
-            $order_goods = [];
             foreach ($params['goods_ids'] as $k=>$v){
+                $order_goods = [];
                 $order_goods[$k]['goods_id'] = $v['goods_id'];
                 $goods = \app\adminapi\model\Goods::find($v['goods_id']);
                 $order_goods[$k]['goods_name'] = $goods['goods_name'];
@@ -79,10 +80,13 @@ class Order extends BaseApi
                 $order_goods[$k]['shop_name'] = $shop['shop_name'];
                 $order_goods_model = new \app\homeapi\model\OrderGoods();
                 $order_goods_model->allowField(true)->saveAll($order_goods);
+                \app\adminapi\model\Goods::where('id','=',$v['goods_id'])->setField('sales',$goods['sales']+$spec_goods['price']*$v['number']);
                 $where = [];
                 $where['spec_goods_id'] = ['=',$v['spec_goods_id']];
                 $where['user_id'] = ['=',$v['user_id']];
                 \app\adminapi\model\Cart::where($where)->delete();
+                \app\adminapi\model\Goods::where('id','=',$v['goods_id'])->setInc('sales_num');
+                \app\adminapi\model\Shop::where('id','=',$goods['shop_id'])->setInc('sales_num');
             }
             $data = \app\homeapi\model\Order::find($info['id']);
             \think\Db::commit();

@@ -10,7 +10,11 @@ class CollectShop extends BaseApi
     {
         $user_id = input('user_id');
         $data = \app\homeapi\model\ShopCollect::where('user_id', $user_id)->find();
-        $data['shop_ids'] = explode('_', $data['shop_ids']);
+        if ($data['shop_ids'] == ''){
+            $data['shop_ids'] = [];
+        }else{
+            $data['shop_ids'] = explode('_', $data['shop_ids']);
+        }
         $this->ok($data);
     }
 
@@ -20,12 +24,21 @@ class CollectShop extends BaseApi
         unset($params['create_time']);
         unset($params['update_time']);
         unset($params['delete_time']);
-        $params['shop_ids'] = implode('_', $params['shop_ids']);
         \think\Db::startTrans();
         try {
             \app\adminapi\model\Shop::update($params, ['id' => $params['id']], true);
             unset($params['id']);
-            \app\homeapi\model\ShopCollect::update($params, ['user_id' => $params['user_id']], true);
+            if (\app\homeapi\model\ShopCollect::where('user_id','=',$params['user_id'])->count() == 0){
+                $params['shop_ids'] = $params['shop_ids'][0];
+                $data = [
+                  'user_id' => $params['user_id'],
+                    'shop_ids' =>$params['shop_ids']
+                ];
+                \app\homeapi\model\ShopCollect::create($data);
+            }else{
+                $params['shop_ids'] = implode('_', $params['shop_ids']);
+                \app\homeapi\model\ShopCollect::update($params, ['user_id' => $params['user_id']], true);
+            }
             \think\Db::commit();
             $this->ok();
         } catch (\Exception $e) {
