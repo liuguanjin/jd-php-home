@@ -26,7 +26,7 @@ class Footprint extends BaseApi
         if (empty($id)){
             $this->fail('未登录或用户信息错误');
         }
-        $footprint = \app\adminapi\model\Footprint::where('user_id',$id)->order('id','desc')->select();
+        $footprint = \app\adminapi\model\Footprint::where('user_id',$id)->order('date','desc')->select();
         foreach ($footprint as $k=>$v){
             $id_array = explode('_',$v['goods_ids']);
             foreach ($id_array as $i=>$u){

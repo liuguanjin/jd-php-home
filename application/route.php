@@ -107,3 +107,5 @@ Route::get('search-recommend','homeapi/SearchGoods/recommend');
 Route::get('search-result','homeapi/SearchGoods/searchResult');
 //用户添加搜索历史接口
 Route::post('search-save','homeapi/SearchGoods/save');
+//用户获取某商品下的评论
+Route::get('goods-evaluate/:id','homeapi/Evaluate/goodsEvaluate');
