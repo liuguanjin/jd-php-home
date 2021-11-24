@@ -100,6 +100,7 @@ class Evaluate extends BaseApi
         ->join('jd_user t2','t1.user_id=t2.id','left')
         ->field('t1.*,t2.nickname,t2.avatar')
         ->where('goods_id',$id)
+        ->where('is_show',1)
         ->with('evaluate_images')
         ->order('is_choice','desc')
         ->paginate(10);
